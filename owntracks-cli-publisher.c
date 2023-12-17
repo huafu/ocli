@@ -393,84 +393,37 @@ static void conditionally_log_fix(struct udata *ud, struct gps_data_t *gpsdata)
 		return;
 	}
 
-	if (gpsdata->set & STATUS_SET) {
-#if GPSD_API_MAJOR_VERSION >= 10
-		switch (gpsdata->fix.status) {
-#else
-		switch (gpsdata->status) {
-#endif
-#ifdef STATUS_FIX
-                        case STATUS_FIX:
-#endif
-#ifdef STATUS_GPS
-                        case STATUS_GPS:
-#endif
-#ifdef STATUS_DGPS_FIX
-                        case STATUS_DGPS_FIX:
-#endif
-#ifdef STATUS_DGPS
-                        case STATUS_DGPS:
-#endif
-				switch (gpsdata->fix.mode) {
-					case MODE_2D:
-						if (gpsdata->set & LATLON_SET) {
-							valid = true;
-						}
-						break;
+	switch (fix->mode) {
+		case MODE_2D:
+			if (gpsdata->set & LATLON_SET) {
+				valid = true;
+			}
+			break;
 
-					case MODE_3D:
-						if (gpsdata->set & (LATLON_SET|ALTITUDE_SET)) {
-							valid = true;
-						}
-						break;
+		case MODE_3D:
+			if (gpsdata->set & (LATLON_SET|ALTITUDE_SET)) {
+				valid = true;
+			}
+			break;
 
-					case MODE_NOT_SEEN:
-						if (ud->verbose) {
-							fprintf(stderr, ".. fix not yet seen\n");
-						}
-						break;
+		case MODE_NOT_SEEN:
+			if (ud->verbose) {
+				fprintf(stderr, ".. fix not yet seen\n");
+			}
+			break;
 
-					case MODE_NO_FIX:
-						if (ud->verbose) {
-							fprintf(stderr, ".. no fix yet\n");
-						}
-						break;
+		case MODE_NO_FIX:
+			if (ud->verbose) {
+				fprintf(stderr, ".. no fix yet\n");
+			}
+			break;
 
-					default:
-						if (ud->verbose) {
-							fprintf(stderr, ".. unpossible mode\n");
-						}
-						break;
-				}
-				break;
-
-#ifdef STATUS_NO_FIX
-                        case STATUS_NO_FIX:
-#endif
-#ifdef STATUS_UNK
-                       case STATUS_UNK:
-#endif
-				if (ud->verbose) {
-					fprintf(stderr, ".. no fix\n");
-				}
-				break;
-
-			default:
-				if (ud->verbose) {
-					fprintf(stderr, "status == %llu\n", gpsdata->set & MODE_SET);
-				}
-				break;
-		}
+		default:
+			if (ud->verbose) {
+				fprintf(stderr, ".. unpossible mode\n");
+			}
+			break;
 	}
-
-#if 0
-#if GPSD_API_MAJOR_VERSION >= 7
-	char *bp;
-	if ((bp = strchr(gpsmessage, '\r')) != NULL)
-		*bp = 0;
-	fprintf(stderr, "(%zu) %s\n", gpsmessagelen, gpsmessage);
-#endif
-#endif
 
 	if (valid == false)
 		return;
