@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Werror -Os -I/usr/local/include
+CFLAGS+=-Wall -Werror -Wno-dangling-pointer -Os -I/usr/local/include
 LDFLAGS=-L /usr/local/lib -lmosquitto -lgps -lm
 
 OCLI = owntracks-cli-publisher
