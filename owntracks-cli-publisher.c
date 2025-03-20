@@ -251,7 +251,8 @@ static void print_fix(struct udata *ud, struct gps_data_t *gpsdata, double ttime
 	if (isnan(fix->latitude) ||
 		isnan(fix->longitude) ||
 		( fix->latitude == 0 && fix->longitude == 0 ) ||
-		isnan(ttime)) {
+		isnan(ttime) ||
+		ttime == 0) {
 		return;
 	}
 
